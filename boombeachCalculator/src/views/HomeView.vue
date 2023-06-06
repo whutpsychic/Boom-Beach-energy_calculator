@@ -28,13 +28,13 @@
     <van-grid :gutter="10" :column-num="4">
       <ItemBtn v-if="!weapon" empty />
       <ItemBtn v-else :type="weapon" />
-      <ItemBtn type="eggy" />
-      <ItemBtn type="smoke" />
-      <ItemBtn type="missile_multi" />
-      <ItemBtn type="paralysis" />
-      <ItemBtn type="first_aid" />
-      <ItemBtn type="signal_flare" />
-      <ItemBtn type="missile" />
+      <ItemBtn type="eggy" @click="useItem('eggy')" />
+      <ItemBtn type="smoke" @click="useItem('smoke')" />
+      <ItemBtn type="missile_multi" @click="useItem('missile_multi')" />
+      <ItemBtn type="paralysis" @click="useItem('paralysis')" />
+      <ItemBtn type="first_aid" @click="useItem('first_aid')" />
+      <ItemBtn type="signal_flare" @click="useItem('signal_flare')" />
+      <ItemBtn type="missile" @click="useItem('missile')" />
     </van-grid>
     <p>英雄技能</p>
     <van-grid :gutter="10" :column-num="4">
@@ -114,6 +114,7 @@
 import { Switch } from '@element-plus/icons-vue'
 import ItemBtn from '../components/ItemBtn.vue';
 import ItemTag from '../components/ItemTag.vue';
+import * as energyBase from "../dataBase"
 
 export default {
   components: { ItemBtn, ItemTag },
@@ -124,12 +125,42 @@ export default {
       // 能量数值
       myPower: 68,
       cost: 0,
+      // =============================
       // 英雄能力
       heroPower: "hero1_grenade",
       // 附加能力
       weapon: null,
       // 原型部队
       prototypeArmy: null,
+      // =============================
+      // 导弹数量
+      missileNum: 0,
+      // 信号弹数量
+      signalNum: 0,
+      // 医疗包数量
+      firstAidNum: 0,
+      // 震爆数量
+      paralysisNum: 0,
+      // 多管数量
+      missileMultiNum: 0,
+      // 烟雾数量
+      smokeNum: 0,
+      // 小怪数量
+      eggyNum: 0,
+      // 限时武器数量
+      limitedWeaponNum: 0,
+
+      // 坦克数量
+      tankNum: 0,
+      // 火车数量
+      trainNum: 0,
+      // 老头数量
+      oldManNum: 0,
+      // 限时兵种数量
+      originalNum: 0,
+
+      // 英雄技能数量
+      heroNum: 0,
       // =============================
       // 控制台 - 显示抽屉
       showDrawer: true,
@@ -157,6 +188,27 @@ export default {
     onChooseComplete() {
       this.showDrawer = false
     },
+    // 消耗能量
+    costEnery(n) {
+      this.cost += n;
+    },
+    // 使用后判断还能不能再用武器
+    // 使用物品
+    useItem(type) {
+      const { energyMissile } = energyBase
+      switch (type) {
+        case "missile":
+          const { missileNum } = this
+          this.costEnery(energyMissile[missileNum])
+          this.missileNum += 1;
+          break;
+        default: return
+      }
+
+
+
+
+    }
   },
 
 }

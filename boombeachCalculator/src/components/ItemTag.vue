@@ -178,16 +178,11 @@ export default {
 </script>
 
 <style scoped>
-.item-can:active .item-btn {
-  width: 50px;
-  height: 50px;
-}
 
 .item-btn {
   position: relative;
   width: 60px;
   height: 60px;
-  transition: .1s;
 }
 
 .item-btn img {

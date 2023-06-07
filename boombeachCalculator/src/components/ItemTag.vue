@@ -80,7 +80,7 @@ export default {
   data() {
     return {
       // 原始图片尺寸
-      originalImgSize: 100,
+      originalImgSize: 70,
     }
   },
   mounted() {

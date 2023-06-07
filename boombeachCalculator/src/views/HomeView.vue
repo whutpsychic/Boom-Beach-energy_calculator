@@ -19,9 +19,14 @@
     </div>
     <p>登陆兵力</p>
     <van-grid :gutter="10" :column-num="4">
-      <ItemBtn type="tank" @click="useItem('tank')" />
-      <ItemBtn type="tank_fire" @click="useItem('tank_fire')" />
-      <ItemBtn type="grenade" @click="useItem('grenade')" />
+      <ItemBtn type="tank" @click="useItem('tank')" :num="tankNum" :energy="getNextCost(energyBase.energyTank, tankNum)"
+        :greyType="cannotUseAgain(energyBase.energyTank, tankNum)" />
+      <ItemBtn type="tank_fire" @click="useItem('tank_fire')" :num="trainNum"
+        :energy="getNextCost(energyBase.energyTankFire, trainNum)"
+        :greyType="cannotUseAgain(energyBase.energyTankFire, trainNum)" />
+      <ItemBtn type="grenade" @click="useItem('grenade')" :num="oldManNum"
+        :energy="getNextCost(energyBase.energyGrenade, oldManNum)"
+        :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
       <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" />
     </van-grid>
     <p>战舰武器</p>
@@ -51,8 +56,12 @@
     </van-grid>
     <p>英雄技能</p>
     <van-grid :gutter="10" :column-num="4">
-      <ItemBtn :type="heroPower" />
+      <ItemBtn v-if="!heroPower" empty />
+      <ItemBtn v-else :type="heroPower" @click="useItem('hero')" :num="heroNum" :energy="getNextCost(heroEnergy, heroNum)"
+        :greyType="cannotUseAgain(heroEnergy, heroNum)" />
     </van-grid>
+    <div :style="'height:30px;'" />
+    <van-button block @click="resetValues">重 来</van-button>
   </main>
   <!-- 选择武器抽屉 -->
   <el-drawer v-model="showDrawer" :direction="'ltr'" :size="'95%'" :show-close="false" :with-header="false">
@@ -141,7 +150,8 @@ export default {
       cost: 0,
       // =============================
       // 英雄能力
-      heroPower: "hero1_grenade",
+      // heroPower: "hero1_grenade",
+      heroPower: null,
       // 附加能力
       weapon: null,
       // 原型部队
@@ -163,6 +173,8 @@ export default {
       eggyNum: 0,
       // 限时武器数量
       limitedWeaponNum: 0,
+      // 限时武器能量数据
+      limitedWeaponEnergy: [],
 
       // 坦克数量
       tankNum: 0,
@@ -172,9 +184,13 @@ export default {
       oldManNum: 0,
       // 限时兵种数量
       originalNum: 0,
+      // 限时兵种能量数据
+      originalEnergy: [],
 
       // 英雄技能数量
       heroNum: 0,
+      // 英雄能量数据
+      heroEnergy: [],
       // =============================
       // 控制台 - 显示抽屉
       showDrawer: false,
@@ -191,7 +207,14 @@ export default {
   },
   methods: {
     chooseWeapon(weapon) {
+      console.log(`----------------------------${weapon}`)
       this.weapon = weapon
+      switch (weapon) {
+        case "hacker":
+          this.limitedWeaponEnergy = energyBase.energyHacker
+          break;
+        default: return
+      }
     },
     choosePrototype(prototype) {
       this.prototypeArmy = prototype
@@ -225,9 +248,11 @@ export default {
     // 使用物品
     useItem(type) {
       const { energyMissile, energySignalFlare, energyFirstAid, energyParalysis, energyMissileMulti, energySmoke, energyEggy } = energyBase
+      const { energyTank, energyTankFire, energyGrenade } = energyBase
       const { leftEnergy } = this
       let willCost = 0
       switch (type) {
+        // 基础兵力
         case "missile":
           const { missileNum } = this
           willCost = this.getNextCost(energyMissile, missileNum)
@@ -291,13 +316,82 @@ export default {
           this.costEnery(willCost)
           this.eggyNum += 1;
           break;
+        // 
+        case "grenade":
+          const { oldManNum } = this
+          willCost = this.getNextCost(energyGrenade, oldManNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.oldManNum += 1;
+          break;
+        case "tank_fire":
+          const { trainNum } = this
+          willCost = this.getNextCost(energyTankFire, trainNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.trainNum += 1;
+          break;
+        case "tank":
+          const { tankNum } = this
+          willCost = this.getNextCost(energyTank, tankNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.tankNum += 1;
+          break;
+        // 英雄技能
+        case "hero":
+          const { heroNum, heroEnergy } = this
+          willCost = this.getNextCost(heroEnergy, heroNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.heroNum += 1;
+          break;
+        // 原型兵种
+
+        // 限时武器
+
         default: return
       }
-
-
-
-
-    }
+    },
+    // 数值复位
+    resetValues() {
+      this.cost = 0
+      this.missileNum = 0
+      this.signalNum = 0
+      this.firstAidNum = 0
+      this.paralysisNum = 0
+      this.missileMultiNum = 0
+      this.smokeNum = 0
+      this.eggyNum = 0
+      this.tankNum = 0
+      this.trainNum = 0
+      this.oldManNum = 0
+      // 
+      this.heroNum = 0
+      this.originalNum = 0
+      this.limitedWeaponNum = 0
+      this.heroEnergy = []
+      this.originalEnergy = []
+      this.limitedWeaponEnergy = []
+    },
+    // // 设置环境(英雄技能、限时能力、原型兵种)
+    // setEnv() {
+    //   // 
+    //   this.heroNum = 0
+    //   this.originalNum = 0
+    //   this.limitedWeaponNum = 0
+    //   this.heroEnergy = []
+    //   this.originalEnergy = []
+    //   this.limitedWeaponEnergy = []
+    // },
   },
 
 }

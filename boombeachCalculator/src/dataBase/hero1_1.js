@@ -1,3 +1,3 @@
 export default [
-  2
+  3, 6, 9, 12, 15
 ]

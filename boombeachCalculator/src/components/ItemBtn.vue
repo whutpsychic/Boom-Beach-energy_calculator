@@ -5,7 +5,7 @@
         <img class="op" ref="img" :src="judgeType(type)" />
       </div>
       <canvas ref="canvas" class="canvas" width="60" height="60" />
-      <div class="item-btn-wrapper">
+      <div class="item-btn-wrapper" v-show="greyType">
         <img ref="img2" class="greyType" :src="judgeType(type)" />
       </div>
       <div class="selected-can" v-show="selected">
@@ -14,10 +14,10 @@
         </el-icon>
       </div>
     </div>
-    <div class="badger" v-show="!empty && (num > 0)">
+    <div v-if="!empty" class="badger" v-show="!empty && (num > 0)">
       x{{ num }}
     </div>
-    <div class="price" v-show="!empty && (energy > 0)">
+    <div v-if="!empty" class="price" v-show="!empty && (energy > 0)">
       {{ energy }}
     </div>
   </van-grid-item>
@@ -95,7 +95,6 @@ export default {
   },
   watch: {
     greyType(newv, oldv) {
-      console.log(newv)
       if ((newv !== oldv) && newv) {
         this.convertToGray()
       }
@@ -253,6 +252,7 @@ export default {
 .price {
   font-size: 17px;
   font-weight: bold;
+  color: #888;
   position: absolute;
   bottom: 4px;
   left: 4px;

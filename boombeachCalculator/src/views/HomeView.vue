@@ -32,7 +32,9 @@
     <p>战舰武器</p>
     <van-grid :gutter="10" :column-num="4">
       <ItemBtn v-if="!weapon" empty />
-      <ItemBtn v-else :type="weapon" />
+      <ItemBtn v-else :type="weapon" @click="useItem('limited')" :num="limitedWeaponNum"
+        :energy="getNextCost(limitedWeaponEnergy, limitedWeaponNum)"
+        :greyType="cannotUseAgain(limitedWeaponEnergy, limitedWeaponNum)" />
       <ItemBtn type="eggy" @click="useItem('eggy')" :num="eggyNum" :energy="getNextCost(energyBase.energyEggy, eggyNum)"
         :greyType="cannotUseAgain(energyBase.energyEggy, eggyNum)" />
       <ItemBtn type="smoke" @click="useItem('smoke')" :num="smokeNum"
@@ -182,9 +184,9 @@ export default {
       trainNum: 0,
       // 老头数量
       oldManNum: 0,
-      // 限时兵种数量
+      // 原型兵种数量
       originalNum: 0,
-      // 限时兵种能量数据
+      // 原型兵种能量数据
       originalEnergy: [],
 
       // 英雄技能数量
@@ -207,22 +209,92 @@ export default {
   },
   methods: {
     chooseWeapon(weapon) {
-      console.log(`----------------------------${weapon}`)
       this.weapon = weapon
       switch (weapon) {
         case "hacker":
-          this.limitedWeaponEnergy = energyBase.energyHacker
+          this.limitedWeaponEnergy = energyBase.hacker
+          break;
+        case "icer":
+          this.limitedWeaponEnergy = energyBase.icer
+          break;
+        case "paralysis_mini":
+          this.limitedWeaponEnergy = energyBase.paralysis_mini
+          break;
+        case "regeneration":
+          this.limitedWeaponEnergy = energyBase.regeneration
+          break;
+        case "serum":
+          this.limitedWeaponEnergy = energyBase.serum
+          break;
+        case "shield":
+          this.limitedWeaponEnergy = energyBase.shield
+          break;
+        case "super_aboriginal":
+          this.limitedWeaponEnergy = energyBase.super_aboriginal
+          break;
+        case "turret":
+          this.limitedWeaponEnergy = energyBase.turret
           break;
         default: return
       }
     },
     choosePrototype(prototype) {
+      console.log(prototype)
       this.prototypeArmy = prototype
+      switch (prototype) {
+        case "xxxxxx":
+          this.sssssss = energyBase.xxxxxx
+          break;
+        default: return
+      }
     },
     chooseHero(hero) {
       this.heroPower = hero
+      switch (hero) {
+        case "hero1_grenade":
+          this.heroEnergy = energyBase.hero1_1
+          break;
+        case "hero1_steel":
+          this.heroEnergy = energyBase.hero1_2
+          break;
+        case "hero1_roar":
+          this.heroEnergy = energyBase.hero1_3
+          break;
+
+        case "hero2_healing":
+          this.heroEnergy = energyBase.hero2_1
+          break;
+        case "hero2_shield":
+          this.heroEnergy = energyBase.hero2_2
+          break;
+        case "hero2_reborn":
+          this.heroEnergy = energyBase.hero2_3
+          break;
+
+        case "hero3_eggy":
+          this.heroEnergy = energyBase.hero3_1
+          break;
+        case "hero3_boomer":
+          this.heroEnergy = energyBase.hero3_2
+          break;
+        case "hero3_hacking":
+          this.heroEnergy = energyBase.hero3_3
+          break;
+
+        case "hero4_comeon":
+          this.heroEnergy = energyBase.hero4_1
+          break;
+        case "hero4_fucking":
+          this.heroEnergy = energyBase.hero4_2
+          break;
+        case "hero4_hist":
+          this.heroEnergy = energyBase.hero4_3
+          break;
+        default: return
+      }
     },
     onChooseComplete() {
+      this.resetValues()
       this.showDrawer = false
     },
     // 消耗能量
@@ -355,7 +427,15 @@ export default {
           this.heroNum += 1;
           break;
         // 原型兵种
-
+        case "limited":
+          const { limitedWeaponNum, limitedWeaponEnergy } = this
+          willCost = this.getNextCost(limitedWeaponEnergy, limitedWeaponNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.limitedWeaponNum += 1;
+          break;
         // 限时武器
 
         default: return
@@ -378,9 +458,9 @@ export default {
       this.heroNum = 0
       this.originalNum = 0
       this.limitedWeaponNum = 0
-      this.heroEnergy = []
-      this.originalEnergy = []
-      this.limitedWeaponEnergy = []
+      // this.heroEnergy = []
+      // this.originalEnergy = []
+      // this.limitedWeaponEnergy = []
     },
     // // 设置环境(英雄技能、限时能力、原型兵种)
     // setEnv() {
@@ -428,7 +508,7 @@ export default {
 
 .affixer {
   position: fixed;
-  top: calc(50% - 16px);
+  top: calc(50%);
   left: -16px;
   width: 32px;
   height: 32px;

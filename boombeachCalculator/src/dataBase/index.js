@@ -16,10 +16,31 @@ import energyGrenade from "./grenade"
 import hero1_1 from "./hero1_1"
 import hero1_2 from "./hero1_2"
 import hero1_3 from "./hero1_3"
+import hero2_1 from "./hero2_1"
+import hero2_2 from "./hero2_2"
+import hero2_3 from "./hero2_3"
+import hero3_1 from "./hero3_1"
+import hero3_2 from "./hero3_2"
+import hero3_3 from "./hero3_3"
+import hero4_1 from "./hero4_1"
+import hero4_2 from "./hero4_2"
+import hero4_3 from "./hero4_3"
 
+// 限时武器
+import hacker from "./hacker"
+import icer from "./icer"
+import paralysis_mini from "./paralysis_mini"
+import regeneration from "./regeneration"
+import serum from "./serum"
+import shield from "./shield"
+import super_aboriginal from "./super_aboriginal"
+import turret from "./turret"
+import uav from "./UAV"
 
+// 原型兵种
 
 
 export { energyEggy, energyFirstAid, energyMissile, energyMissileMulti, energyParalysis, energySignalFlare, energySmoke }
 export { energyTank, energyTankFire, energyGrenade }
-export { hero1_1, hero1_2, hero1_3 }
+export { hero1_1, hero1_2, hero1_3, hero2_1, hero2_2, hero2_3, hero3_1, hero3_2, hero3_3, hero4_1, hero4_2, hero4_3 }
+export { hacker, icer, paralysis_mini, regeneration, serum, shield, super_aboriginal, turret, uav }

@@ -6,7 +6,7 @@
     </div>
     <div class="data-card">
       <p>剩余能量</p>
-      <span>{{ left }}</span>
+      <span>{{ leftEnergy }}</span>
     </div>
     <div class="data-card">
       <p>消耗能量</p>
@@ -19,22 +19,35 @@
     </div>
     <p>登陆兵力</p>
     <van-grid :gutter="10" :column-num="4">
-      <ItemBtn type="tank" />
-      <ItemBtn type="tank_fire" />
-      <ItemBtn type="grenade" />
+      <ItemBtn type="tank" @click="useItem('tank')" />
+      <ItemBtn type="tank_fire" @click="useItem('tank_fire')" />
+      <ItemBtn type="grenade" @click="useItem('grenade')" />
       <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" />
     </van-grid>
     <p>战舰武器</p>
     <van-grid :gutter="10" :column-num="4">
       <ItemBtn v-if="!weapon" empty />
       <ItemBtn v-else :type="weapon" />
-      <ItemBtn type="eggy" @click="useItem('eggy')" />
-      <ItemBtn type="smoke" @click="useItem('smoke')" />
-      <ItemBtn type="missile_multi" @click="useItem('missile_multi')" />
-      <ItemBtn type="paralysis" @click="useItem('paralysis')" />
-      <ItemBtn type="first_aid" @click="useItem('first_aid')" />
-      <ItemBtn type="signal_flare" @click="useItem('signal_flare')" />
-      <ItemBtn type="missile" @click="useItem('missile')" />
+      <ItemBtn type="eggy" @click="useItem('eggy')" :num="eggyNum" :energy="getNextCost(energyBase.energyEggy, eggyNum)"
+        :greyType="cannotUseAgain(energyBase.energyEggy, eggyNum)" />
+      <ItemBtn type="smoke" @click="useItem('smoke')" :num="smokeNum"
+        :energy="getNextCost(energyBase.energySmoke, smokeNum)"
+        :greyType="cannotUseAgain(energyBase.energySmoke, smokeNum)" />
+      <ItemBtn type="missile_multi" @click="useItem('missile_multi')" :num="missileMultiNum"
+        :energy="getNextCost(energyBase.energyMissileMulti, missileMultiNum)"
+        :greyType="cannotUseAgain(energyBase.energyMissileMulti, missileMultiNum)" />
+      <ItemBtn type="paralysis" @click="useItem('paralysis')" :num="paralysisNum"
+        :energy="getNextCost(energyBase.energyParalysis, paralysisNum)"
+        :greyType="cannotUseAgain(energyBase.energyParalysis, paralysisNum)" />
+      <ItemBtn type="first_aid" @click="useItem('first_aid')" :num="firstAidNum"
+        :energy="getNextCost(energyBase.energyFirstAid, firstAidNum)"
+        :greyType="cannotUseAgain(energyBase.energyFirstAid, firstAidNum)" />
+      <ItemBtn type="signal_flare" @click="useItem('signal_flare')" :num="signalNum"
+        :energy="getNextCost(energyBase.energySignalFlare, signalNum)"
+        :greyType="cannotUseAgain(energyBase.energySignalFlare, signalNum)" />
+      <ItemBtn type="missile" @click="useItem('missile')" :num="missileNum"
+        :energy="getNextCost(energyBase.energyMissile, missileNum)"
+        :greyType="cannotUseAgain(energyBase.energyMissile, missileNum)" />
     </van-grid>
     <p>英雄技能</p>
     <van-grid :gutter="10" :column-num="4">
@@ -122,8 +135,9 @@ export default {
     return {
       // 图标组件
       Switch,
+      energyBase,
       // 能量数值
-      myPower: 68,
+      myPower: 110,
       cost: 0,
       // =============================
       // 英雄能力
@@ -163,11 +177,11 @@ export default {
       heroNum: 0,
       // =============================
       // 控制台 - 显示抽屉
-      showDrawer: true,
+      showDrawer: false,
     }
   },
   computed: {
-    left() {
+    leftEnergy() {
       const { myPower, cost } = this
       return myPower - cost
     }
@@ -192,15 +206,90 @@ export default {
     costEnery(n) {
       this.cost += n;
     },
-    // 使用后判断还能不能再用武器
+    // 计算下次使用武器的能量消耗
+    getNextCost(energy, num) {
+      const L = energy.length
+      const opL = num >= L ? L - 1 : num
+      return energy[opL]
+    },
+    // 不能再次使用
+    cannotUseAgain(energy, num) {
+      const { leftEnergy } = this
+      let willCost = this.getNextCost(energy, num)
+      if (willCost > leftEnergy) {
+        return true
+      } else {
+        return false
+      }
+    },
     // 使用物品
     useItem(type) {
-      const { energyMissile } = energyBase
+      const { energyMissile, energySignalFlare, energyFirstAid, energyParalysis, energyMissileMulti, energySmoke, energyEggy } = energyBase
+      const { leftEnergy } = this
+      let willCost = 0
       switch (type) {
         case "missile":
           const { missileNum } = this
-          this.costEnery(energyMissile[missileNum])
+          willCost = this.getNextCost(energyMissile, missileNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
           this.missileNum += 1;
+          break;
+        case "signal_flare":
+          const { signalNum } = this
+          willCost = this.getNextCost(energySignalFlare, signalNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.signalNum += 1;
+          break;
+        case "first_aid":
+          const { firstAidNum } = this
+          willCost = this.getNextCost(energyFirstAid, firstAidNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.firstAidNum += 1;
+          break;
+        case "paralysis":
+          const { paralysisNum } = this
+          willCost = this.getNextCost(energyParalysis, paralysisNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.paralysisNum += 1;
+          break;
+        case "missile_multi":
+          const { missileMultiNum } = this
+          willCost = this.getNextCost(energyMissileMulti, missileMultiNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.missileMultiNum += 1;
+          break;
+        case "smoke":
+          const { smokeNum } = this
+          willCost = this.getNextCost(energySmoke, smokeNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.smokeNum += 1;
+          break;
+        case "eggy":
+          const { eggyNum } = this
+          willCost = this.getNextCost(energyEggy, eggyNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.eggyNum += 1;
           break;
         default: return
       }

@@ -1,11 +1,11 @@
 <template>
-  <van-grid-item class="item-can">
+  <van-grid-item :class="greyType ? `item-can greying` : `item-can`">
     <div v-if="!empty" class="item-btn">
       <div class="item-btn-wrapper">
-        <img ref="img" :src="judgeType(type)" />
+        <img class="op" ref="img" :src="judgeType(type)" />
       </div>
-      <canvas ref="canvas" class="canvas" />
-      <div class="item-btn-wrapper" v-show="greyType">
+      <canvas ref="canvas" class="canvas" width="60" height="60" />
+      <div class="item-btn-wrapper">
         <img ref="img2" class="greyType" :src="judgeType(type)" />
       </div>
       <div class="selected-can" v-show="selected">
@@ -13,6 +13,12 @@
           <Check />
         </el-icon>
       </div>
+    </div>
+    <div class="badger" v-show="!empty && (num > 0)">
+      x{{ num }}
+    </div>
+    <div class="price" v-show="!empty && (energy > 0)">
+      {{ energy }}
     </div>
   </van-grid-item>
 </template>
@@ -75,17 +81,24 @@ export default {
     size: { type: Number, default: 60 },
     greyType: { type: Boolean, default: false },
     selected: { type: Boolean, default: false },
-    empty: { type: Boolean, default: false }
+    empty: { type: Boolean, default: false },
+    // 已使用次数
+    num: { type: Number, default: 0 },
+    // 下次使用将消耗能量数值
+    energy: { type: Number, default: 0 },
   },
   data() {
     return {
       // 原始图片尺寸
-      originalImgSize: 100,
+      originalImgSize: 70,
     }
   },
-  mounted() {
-    if (!this.empty) {
-      this.convertToGray()
+  watch: {
+    greyType(newv, oldv) {
+      console.log(newv)
+      if ((newv !== oldv) && newv) {
+        this.convertToGray()
+      }
     }
   },
   methods: {
@@ -183,6 +196,11 @@ export default {
   height: 50px;
 }
 
+.item-can.greying:active .item-btn {
+  width: 60px;
+  height: 60px;
+}
+
 .item-btn {
   position: relative;
   width: 60px;
@@ -190,7 +208,15 @@ export default {
   transition: .1s;
 }
 
-.item-btn img {
+.item-btn img.op {
+  width: 60px;
+  height: 60px;
+}
+
+.item-btn img.greyType {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 60px;
   height: 60px;
 }
@@ -201,12 +227,6 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-}
-
-.greyType {
-  position: absolute;
-  top: 0;
-  left: 0;
 }
 
 .selected-can {
@@ -220,5 +240,21 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.badger {
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
+.price {
+  font-size: 17px;
+  font-weight: bold;
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
 }
 </style>

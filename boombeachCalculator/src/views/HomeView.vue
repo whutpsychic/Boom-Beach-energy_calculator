@@ -15,9 +15,9 @@
   </header>
   <main class="main-body">
     <div class="affixer" v-show="!showDrawer">
-      <el-button :icon="Switch" round size="large" @click="showDrawer = true"></el-button>
+      <van-button icon="exchange" size="large" @click="onSetEnv">配置</van-button>
     </div>
-    <p>登陆兵力</p>
+    <p> ----------- 登陆兵力 ----------- </p>
     <van-grid :gutter="10" :column-num="4">
       <ItemBtn type="tank" @click="useItem('tank')" :num="tankNum" :energy="getNextCost(energyBase.energyTank, tankNum)"
         :greyType="cannotUseAgain(energyBase.energyTank, tankNum)" />
@@ -27,9 +27,10 @@
       <ItemBtn type="grenade" @click="useItem('grenade')" :num="oldManNum"
         :energy="getNextCost(energyBase.energyGrenade, oldManNum)"
         :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
-      <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" />
+      <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" @click="useItem('original')" :num="originalNum"
+        :energy="getNextCost(originalEnergy, originalNum)" :greyType="cannotUseAgain(originalEnergy, originalNum)" />
     </van-grid>
-    <p>战舰武器</p>
+    <p> ----------- 战舰武器 ----------- </p>
     <van-grid :gutter="10" :column-num="4">
       <ItemBtn v-if="!weapon" empty />
       <ItemBtn v-else :type="weapon" @click="useItem('limited')" :num="limitedWeaponNum"
@@ -56,19 +57,25 @@
         :energy="getNextCost(energyBase.energyMissile, missileNum)"
         :greyType="cannotUseAgain(energyBase.energyMissile, missileNum)" />
     </van-grid>
-    <p>英雄技能</p>
-    <van-grid :gutter="10" :column-num="4">
+    <p> ----------- 英雄技能 ----------- </p>
+    <van-grid :gutter="10" :column-num="3">
       <ItemBtn v-if="!heroPower" empty />
       <ItemBtn v-else :type="heroPower" @click="useItem('hero')" :num="heroNum" :energy="getNextCost(heroEnergy, heroNum)"
         :greyType="cannotUseAgain(heroEnergy, heroNum)" />
     </van-grid>
     <div :style="'height:30px;'" />
     <van-button block @click="resetValues">重 来</van-button>
+    <div :style="'height:20px;'" />
+    <van-button block icon="after-sale" @click="onReward">请我喝罐可乐</van-button>
   </main>
+  <footer>
+    <p>copyright©2023 程远少帅</p>
+    <p>进群加 v 13030011528</p>
+  </footer>
   <!-- 选择武器抽屉 -->
   <el-drawer v-model="showDrawer" :direction="'ltr'" :size="'95%'" :show-close="false" :with-header="false">
-    <p class="drawer-title"><span>状态配置</span><el-button @click="onChooseComplete" :size="'large'">ok</el-button></p>
-    <p>英雄能力</p>
+    <p class="drawer-title"><span>状态配置</span><el-button @click="onChooseComplete" :size="'large'">Go!</el-button></p>
+    <p>英雄技能</p>
     <van-grid :gutter="10" :column-num="3">
       <ItemTag type="hero1_grenade" @click="chooseHero('hero1_grenade')"
         :greyType="heroPower && (heroPower !== 'hero1_grenade')" :selected="heroPower === 'hero1_grenade'" />
@@ -132,20 +139,28 @@
         :greyType="prototypeArmy && (prototypeArmy !== 'tank_laser')" :selected="prototypeArmy === 'tank_laser'" />
     </van-grid>
   </el-drawer>
+  <!-- 赞助抽屉 -->
+  <el-drawer v-model="rewardDrawer" :direction="'rtl'" title="大哥您好" :size="'95%'" :show-close="true" :with-header="true">
+    <div class="">
+
+    </div>
+    <van-image :src="alipay"></van-image>
+    <van-image :src="vx"></van-image>
+  </el-drawer>
 </template>
 
 <script>
-import { Switch } from '@element-plus/icons-vue'
 import ItemBtn from '../components/ItemBtn.vue';
 import ItemTag from '../components/ItemTag.vue';
 import * as energyBase from "../dataBase"
+import alipay from '@/assets/img/alipay.jpg'
+import vx from '@/assets/img/vx.jpg'
 
 export default {
   components: { ItemBtn, ItemTag },
   data() {
     return {
-      // 图标组件
-      Switch,
+      alipay, vx,
       energyBase,
       // 能量数值
       myPower: 110,
@@ -196,6 +211,7 @@ export default {
       // =============================
       // 控制台 - 显示抽屉
       showDrawer: false,
+      rewardDrawer: false
     }
   },
   computed: {
@@ -208,6 +224,12 @@ export default {
 
   },
   methods: {
+    onSetEnv() {
+      this.showDrawer = true
+      // this.heroPower = null
+      // this.weapon = null
+      // this.prototypeArmy = null
+    },
     chooseWeapon(weapon) {
       this.weapon = weapon
       switch (weapon) {
@@ -239,11 +261,25 @@ export default {
       }
     },
     choosePrototype(prototype) {
-      console.log(prototype)
       this.prototypeArmy = prototype
       switch (prototype) {
-        case "xxxxxx":
-          this.sssssss = energyBase.xxxxxx
+        case "big_yellow":
+          this.originalEnergy = energyBase.big_yellow
+          break;
+        case "chopper":
+          this.originalEnergy = energyBase.chopper
+          break;
+        case "tank_egg":
+          this.originalEnergy = energyBase.tank_egg
+          break;
+        case "tank_grenade":
+          this.originalEnergy = energyBase.tank_grenade
+          break;
+        case "tank_ice":
+          this.originalEnergy = energyBase.tank_ice
+          break;
+        case "tank_laser":
+          this.originalEnergy = energyBase.tank_laser
           break;
         default: return
       }
@@ -427,6 +463,16 @@ export default {
           this.heroNum += 1;
           break;
         // 原型兵种
+        case "original":
+          const { originalNum, originalEnergy } = this
+          willCost = this.getNextCost(originalEnergy, originalNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.originalNum += 1;
+          break;
+        // 限时武器
         case "limited":
           const { limitedWeaponNum, limitedWeaponEnergy } = this
           willCost = this.getNextCost(limitedWeaponEnergy, limitedWeaponNum)
@@ -436,8 +482,6 @@ export default {
           this.costEnery(willCost)
           this.limitedWeaponNum += 1;
           break;
-        // 限时武器
-
         default: return
       }
     },
@@ -462,16 +506,10 @@ export default {
       // this.originalEnergy = []
       // this.limitedWeaponEnergy = []
     },
-    // // 设置环境(英雄技能、限时能力、原型兵种)
-    // setEnv() {
-    //   // 
-    //   this.heroNum = 0
-    //   this.originalNum = 0
-    //   this.limitedWeaponNum = 0
-    //   this.heroEnergy = []
-    //   this.originalEnergy = []
-    //   this.limitedWeaponEnergy = []
-    // },
+    // 赞助按钮
+    onReward() {
+      this.rewardDrawer = true
+    },
   },
 
 }
@@ -479,6 +517,10 @@ export default {
 </script>
 
 <style scoped>
+.main-body p {
+  text-align: center;
+}
+
 .top-section {
   display: flex;
   justify-content: space-around;
@@ -508,9 +550,9 @@ export default {
 
 .affixer {
   position: fixed;
-  top: calc(50%);
-  left: -16px;
-  width: 32px;
+  top: calc(100px);
+  left: -10px;
+  width: 80px;
   height: 32px;
   z-index: 99;
 }
@@ -527,5 +569,31 @@ export default {
 .item-btn {
   width: 70px;
   height: 70px;
+}
+
+header,
+main {
+  padding: 10px;
+}
+
+footer {
+  /* height: 50px; */
+  display: flex;
+  flex-wrap: wrap;
+  background-image: linear-gradient(to bottom, #000080, #1E90FF);
+  color: #fff;
+  margin-top: 20px;
+  padding-top: 10px;
+}
+
+footer>p {
+  font-size: 15px;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+footer>* {
+  flex-basis: 100%;
+  text-align: center;
 }
 </style>

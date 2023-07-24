@@ -28,11 +28,11 @@
 import grenade from "@/assets/img/grenade.png"
 import tank_fire from "@/assets/img/tank_fire.png"
 import tank from "@/assets/img/tank.png"
+import mecha from "@/assets/img/mecha.png"
 
 // 战舰武器
 import eggy from "@/assets/img/eggy.png"
 import first_aid from "@/assets/img/first_aid.png"
-import mecha from "@/assets/img/mecha.png"
 import missile from "@/assets/img/missile.png"
 import missile_multi from "@/assets/img/missile_multi.png"
 import paralysis from "@/assets/img/paralysis.png"
@@ -108,6 +108,7 @@ export default {
         case "grenade": return grenade
         case "tank_fire": return tank_fire
         case "tank": return tank
+        case "mecha": return mecha
 
         // 战舰武器
         case "missile": return missile
@@ -117,7 +118,6 @@ export default {
         case "smoke": return smoke
         case "eggy": return eggy
         case "first_aid": return first_aid
-        case "mecha": return mecha
 
         // 英雄能力
         case "hero1_grenade": return hero1_grenade

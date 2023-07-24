@@ -27,6 +27,9 @@
       <ItemBtn type="grenade" @click="useItem('grenade')" :num="oldManNum"
         :energy="getNextCost(energyBase.energyGrenade, oldManNum)"
         :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
+      <ItemBtn type="mecha" @click="useItem('mecha')" :num="mechaNum"
+        :energy="getNextCost(energyBase.energyMecha, mechaNum)"
+        :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
       <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" @click="useItem('original')" :num="originalNum"
         :energy="getNextCost(originalEnergy, originalNum)" :greyType="cannotUseAgain(originalEnergy, originalNum)" />
     </van-grid>
@@ -199,6 +202,8 @@ export default {
       trainNum: 0,
       // 老头数量
       oldManNum: 0,
+      // 机甲数量
+      mechaNum: 0,
       // 原型兵种数量
       originalNum: 0,
       // 原型兵种能量数据
@@ -366,7 +371,7 @@ export default {
     // 使用物品
     useItem(type) {
       const { energyMissile, energySignalFlare, energyFirstAid, energyParalysis, energyMissileMulti, energySmoke, energyEggy } = energyBase
-      const { energyTank, energyTankFire, energyGrenade } = energyBase
+      const { energyTank, energyTankFire, energyGrenade, energyMecha } = energyBase
       const { leftEnergy } = this
       let willCost = 0
       switch (type) {
@@ -461,6 +466,16 @@ export default {
           }
           this.costEnery(willCost)
           this.tankNum += 1;
+          break;
+
+        case "mecha":
+          const { mechaNum } = this
+          willCost = this.getNextCost(energyMecha, mechaNum)
+          if (willCost > leftEnergy) {
+            return
+          }
+          this.costEnery(willCost)
+          this.mechaNum += 1;
           break;
         // 英雄技能
         case "hero":

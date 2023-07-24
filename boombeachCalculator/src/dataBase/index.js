@@ -11,6 +11,7 @@ import energySmoke from "./smoke"
 import energyTank from "./tank"
 import energyTankFire from "./tank_fire"
 import energyGrenade from "./grenade"
+import energyMecha from "./mecha"
 
 // 英雄技能
 import hero1_1 from "./hero1_1"
@@ -46,7 +47,7 @@ import tank_ice from "./tank_ice"
 import tank_laser from "./tank_laser"
 
 export { energyEggy, energyFirstAid, energyMissile, energyMissileMulti, energyParalysis, energySignalFlare, energySmoke }
-export { energyTank, energyTankFire, energyGrenade }
+export { energyTank, energyTankFire, energyGrenade, energyMecha }
 export { hero1_1, hero1_2, hero1_3, hero2_1, hero2_2, hero2_3, hero3_1, hero3_2, hero3_3, hero4_1, hero4_2, hero4_3 }
 export { hacker, icer, paralysis_mini, regeneration, serum, shield, super_aboriginal, turret, uav }
 export { big_yellow, chopper, tank_egg, tank_grenade, tank_ice, tank_laser }

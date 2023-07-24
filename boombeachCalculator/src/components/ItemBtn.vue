@@ -18,7 +18,7 @@
       x{{ num }}
     </div>
     <div v-if="!empty" class="price" v-show="!empty && (energy > 0)">
-      {{ energy }}
+      {{ energy === 999 ? '最大数量' : energy }}
     </div>
   </van-grid-item>
 </template>

@@ -339,9 +339,19 @@ export default {
     },
     // 计算下次使用武器的能量消耗
     getNextCost(energy, num) {
-      const L = energy.length
-      const opL = num >= L ? L - 1 : num
-      return energy[opL]
+      // 先看看是不是超了使用上限
+      if (num >= energy.max) {
+        return 999
+      } else {
+        // 如果有递增趋势则需要计算
+        if (energy.adder) {
+          return energy.cost + energy.adder * (num)
+        }
+        // 否则直接直接返回能量
+        else {
+          return energy.cost
+        }
+      }
     },
     // 不能再次使用
     cannotUseAgain(energy, num) {
@@ -360,7 +370,7 @@ export default {
       const { leftEnergy } = this
       let willCost = 0
       switch (type) {
-        // 基础兵力
+        // 战舰能力
         case "missile":
           const { missileNum } = this
           willCost = this.getNextCost(energyMissile, missileNum)
@@ -424,7 +434,7 @@ export default {
           this.costEnery(willCost)
           this.eggyNum += 1;
           break;
-        // 
+        // 基础兵力
         case "grenade":
           const { oldManNum } = this
           willCost = this.getNextCost(energyGrenade, oldManNum)

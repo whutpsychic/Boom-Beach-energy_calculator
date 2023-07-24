@@ -1,3 +1,6 @@
-export default [
-  10, 16, 22, 28, 34, 40, 46, 52, 58, 64
-]
+export default {
+  // 初始登陆的能量
+  cost: 10,
+  // 递增数量级
+  adder: 6,
+}

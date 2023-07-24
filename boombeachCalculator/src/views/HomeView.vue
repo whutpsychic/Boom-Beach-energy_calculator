@@ -29,7 +29,7 @@
         :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
       <ItemBtn type="mecha" @click="useItem('mecha')" :num="mechaNum"
         :energy="getNextCost(energyBase.energyMecha, mechaNum)"
-        :greyType="cannotUseAgain(energyBase.energyGrenade, oldManNum)" />
+        :greyType="cannotUseAgain(energyBase.energyMecha, mechaNum)" />
       <ItemBtn v-if="prototypeArmy" :type="prototypeArmy" @click="useItem('original')" :num="originalNum"
         :energy="getNextCost(originalEnergy, originalNum)" :greyType="cannotUseAgain(originalEnergy, originalNum)" />
     </van-grid>
@@ -523,6 +523,7 @@ export default {
       this.tankNum = 0
       this.trainNum = 0
       this.oldManNum = 0
+      this.mechaNum = 0
       // 
       this.heroNum = 0
       this.originalNum = 0

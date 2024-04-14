@@ -73,7 +73,7 @@
   </main>
   <footer>
     <p>copyright©2023 程远少帅</p>
-    <p>进群加 v 13030011528</p>
+    <!-- <p>进群加 v 13030011528</p> -->
   </footer>
   <!-- 选择武器抽屉 -->
   <el-drawer v-model="showDrawer" :direction="'ltr'" :size="'95%'" :show-close="false" :with-header="false">
